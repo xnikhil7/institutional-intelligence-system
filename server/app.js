@@ -18,16 +18,29 @@ const server = http.createServer(app);
 
 /* ================= SOCKET ================= */
 
+const allowedOrigins = [
+  "http://127.0.0.1:5500",
+  "http://127.0.0.1:5501",
+  "http://localhost:5500",
+  "http://localhost:5501",
+  "https://iis-client.vercel.app",
+  "https://iis-client.onrender.com"
+];
+
+const extraOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim()).filter(Boolean)
+  : [];
+
+const corsOrigins = Array.from(new Set([...allowedOrigins, ...extraOrigins]));
+
+const corsOptions = {
+  origin: corsOrigins,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+};
+
 const io = new Server(server, {
-  cors: {
-    origin: [
-      "http://127.0.0.1:5500",
-      "http://127.0.0.1:5501",
-      "http://localhost:5500",
-      "http://localhost:5501"
-    ],
-    methods: ["GET","POST","PUT","DELETE"]
-  }
+  cors: corsOptions,
 });
 
 app.set("io", io);
@@ -52,15 +65,7 @@ io.on("connection", (socket) => {
 app.use(express.json());
 app.use(express.static("public"));
 
-app.use(cors({
-  origin:[
-    "http://127.0.0.1:5500",
-    "http://127.0.0.1:5501",
-    "http://localhost:5500",
-    "http://localhost:5501"
-  ],
-  credentials:true
-}));
+app.use(cors(corsOptions));
 
 /* ================= ROUTES ================= */
 

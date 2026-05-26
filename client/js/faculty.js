@@ -1,4 +1,4 @@
-const socket = io("http://localhost:5000");
+const socket = io(SOCKET_URL);
 
 socket.on("newIssue",(data)=>{
   customAlert("New result issue raised!");
@@ -16,7 +16,7 @@ socket.on("attendanceMarked",()=>{
 
 async function loadDashboardIssues() {
   const res = await fetch(
-    "http://localhost:5000/api/result-issues",
+    API + "/result-issues",
     { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
   );
 
@@ -42,7 +42,7 @@ async function loadDashboardIssues() {
 
 async function loadDashboardNotices() {
   const res = await fetch(
-    "http://localhost:5000/api/notices",
+    API + "/notices",
     { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
   );
 
@@ -92,7 +92,7 @@ function addTodo() {
 
 async function loadTodayEvent(){
 
-const res = await fetch("http://localhost:5000/api/today-event");
+const res = await fetch(API + "/today-event");
 const data = await res.json();
 
 todayEvent.innerText =
@@ -141,7 +141,7 @@ async function createSession(){
 
  try {
    const res = await fetch(
-    "http://localhost:5000/api/attendance/session",
+    API + "/attendance/session",
     {
       method:"POST",
       headers:{
@@ -188,7 +188,7 @@ async function postResult(){
  };
 
  const res=await fetch(
-  "http://localhost:5000/api/results/add",
+  API + "/results/add",
   {
     method:"POST",
     headers:{
@@ -227,7 +227,7 @@ async function postNotice() {
   }
 
   try {
-    const res = await fetch("http://localhost:5000/api/notices", {
+    const res = await fetch(API + "/notices", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -264,7 +264,7 @@ async function postNotice() {
 let reportData = {};
 async function loadReport() {
   try {
-    const res = await fetch("http://localhost:5000/api/attendance/report", {
+    const res = await fetch(API + "/attendance/report", {
       headers: { Authorization: "Bearer " + localStorage.getItem("token") }
     });
     const data = await res.json();
@@ -423,7 +423,7 @@ function applyReportFilters() {
 
 async function loadNotices(){
  const r=await fetch(
-  "http://localhost:5000/api/notices",
+  API + "/notices",
   {headers:{Authorization:"Bearer "+localStorage.getItem("token")}}
  );
 
@@ -439,7 +439,7 @@ async function loadNotices(){
 
 // async function loadIssues() {
 //   const res = await fetch(
-//     "http://localhost:5000/api/result-issues",
+//     API + "/result-issues",
 //     {
 //       headers: {
 //         Authorization: "Bearer " + localStorage.getItem("token")
@@ -522,7 +522,7 @@ async function loadNotices(){
 
 async function loadIssues() {
   const res = await fetch(
-    "http://localhost:5000/api/result-issues",
+    API + "/result-issues",
     {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token")
@@ -603,7 +603,7 @@ async function handleIssue(id, action){
   const message = document.getElementById(`msg_${id}`)?.value;
 
   const res = await fetch(
-    "http://localhost:5000/api/result-issues/handle/"+id,
+    API + "/result-issues/handle/"+id,
     {
       method:"PUT",
       headers:{
@@ -626,7 +626,7 @@ async function handleIssue(id, action){
 
 async function resolveIssue(id) {
   const res = await fetch(
-    "http://localhost:5000/api/result-issues/resolve/" + id,
+    API + "/result-issues/resolve/" + id,
     {
       method: "PUT",
       headers: {
@@ -644,7 +644,7 @@ async function resolveIssue(id) {
 async function loadResources() {
   try {
 
-    const res = await fetch("http://localhost:5000/api/resources", {
+    const res = await fetch(API + "/resources", {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token")
       }
@@ -685,7 +685,7 @@ async function loadResults() {
   const subj = document.getElementById("resSubjectFilter")?.value || "";
   const exam = document.getElementById("resExamFilter")?.value || "";
   
-  let url = "http://localhost:5000/api/results/all?";
+  let url = API + "/results/all?";
   if (subj) url += `subject=${encodeURIComponent(subj)}&`;
   if (exam) url += `exam_name=${encodeURIComponent(exam)}&`;
 

@@ -1,7 +1,7 @@
 async function loadResources(){
 
  const res = await fetch(
-  "http://localhost:5000/api/admin/resources-public",
+  API + "/admin/resources-public",
   {
     headers:{
       Authorization:"Bearer "+localStorage.getItem("token")
@@ -54,7 +54,7 @@ async function addResource(){
 function deleteResource(id){
 
  customConfirm("Delete resource?", async () => {
-  await fetch("http://localhost:5000/api/resources/"+id,{
+  await fetch(API + "/resources/"+id,{
     method:"DELETE",
     headers:{
       Authorization:"Bearer "+localStorage.getItem("token")
@@ -82,7 +82,7 @@ resultDiv.innerHTML="🔍 Scanning marketplaces...";
 
 try{
 
-const res=await fetch("http://localhost:5000/api/price/best",{
+const res=await fetch(API + "/price/best",{
 method:"POST",
 headers:{
 "Content-Type":"application/json"

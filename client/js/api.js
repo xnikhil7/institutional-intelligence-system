@@ -1,4 +1,12 @@
-const API = "http://localhost:5000/api";
+const API = window.API || (window.location.hostname === "localhost"
+  ? "http://localhost:5000/api"
+  : "https://iis-backend.onrender.com/api");
+window.API = API;
+
+const SOCKET_URL = window.SOCKET_URL || (window.location.hostname === "localhost"
+  ? "http://localhost:5000"
+  : "https://iis-backend.onrender.com");
+window.SOCKET_URL = SOCKET_URL;
 
 function getToken(){
   return localStorage.getItem("token");

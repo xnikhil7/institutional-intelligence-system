@@ -1,5 +1,5 @@
 ﻿
-const socket = io("http://localhost:5000");
+const socket = io(SOCKET_URL);
 socket.emit("joinRoom","STUDENT");
 
 socket.on("newAttendanceSession",()=>{
@@ -102,7 +102,7 @@ async function loadDashboard(){
 
  // Attendance summary
  const r = await fetch(
-  "http://localhost:5000/api/attendance/student",
+  API + "/attendance/student",
   {headers:{Authorization:"Bearer "+localStorage.getItem("token")}}
  );
  const data = await r.json();
@@ -121,7 +121,7 @@ async function loadDashboard(){
 
  // Latest notice
  const n = await fetch(
-  "http://localhost:5000/api/notices",
+  API + "/notices",
   {headers:{Authorization:"Bearer "+localStorage.getItem("token")}}
  );
 
@@ -134,7 +134,7 @@ async function loadDashboard(){
 
  // Latest Issue
 const res2 = await fetch(
- "http://localhost:5000/api/results/student",
+ API + "/results/student",
  {headers:{Authorization:"Bearer "+localStorage.getItem("token")}}
 );
 
@@ -181,7 +181,7 @@ async function markAttendance(sessionId){
    const lng=pos.coords.longitude;
 
    const res=await fetch(
-    "http://localhost:5000/api/attendance/mark",
+    API + "/attendance/mark",
     {
       method:"POST",
       headers:{
@@ -230,7 +230,7 @@ async function markAttendance(sessionId){
 
 async function loadAttendance(){
  const r=await fetch(
-  "http://localhost:5000/api/attendance/student",
+  API + "/attendance/student",
   {headers:{Authorization:"Bearer "+localStorage.getItem("token")}}
  );
  const data=await r.json();
@@ -259,7 +259,7 @@ async function loadAttendance(){
 
 async function loadActiveSessions(){
  const r=await fetch(
-  "http://localhost:5000/api/attendance/sessions/active",
+  API + "/attendance/sessions/active",
   {headers:{Authorization:"Bearer "+localStorage.getItem("token")}}
  );
  const data=await r.json();
@@ -293,7 +293,7 @@ async function loadActiveSessions(){
 
 async function loadTodayEvent(){
 
-const res = await fetch("http://localhost:5000/api/today-event");
+const res = await fetch(API + "/today-event");
 const data = await res.json();
 
 todayEvent.innerText =
@@ -327,7 +327,7 @@ showTodayDate();
 async function loadResults(){
  try{
    const res = await fetch(
-     "http://localhost:5000/api/results/student",
+     API + "/results/student",
      {
        headers:{
            "Authorization":"Bearer "+localStorage.getItem("token")
@@ -405,7 +405,7 @@ async function submitIssue(){
   }
 
   const res = await fetch(
-    "http://localhost:5000/api/result-issues/raise",
+    API + "/result-issues/raise",
     {
       method:"POST",
       headers:{
@@ -428,7 +428,7 @@ async function submitIssue(){
 
 async function loadNotices(){
  const r=await fetch(
-  "http://localhost:5000/api/notices",
+  API + "/notices",
   {headers:{Authorization:"Bearer "+localStorage.getItem("token")}}
  );
 
@@ -450,7 +450,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadFees(){
 
   const res = await fetch(
-    "http://localhost:5000/api/fees/student",
+    API + "/fees/student",
     {
       headers:{
         Authorization:"Bearer "+localStorage.getItem("token")

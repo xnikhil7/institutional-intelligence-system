@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: iis-backend
+    env: node
+    repo: https://github.com/xnikhil7/institutional-intelligence-system
+    branch: main
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_SSL
+        value: "true"
+      - key: ALLOWED_ORIGINS
+        value: https://iis-client.vercel.app
+      - key: DATABASE_URL
+        value: <your_percent_encoded_database_url>
+      - key: OPENROUTER_API_KEY
+        value: <your_openrouter_api_key>

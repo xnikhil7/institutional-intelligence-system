@@ -13,6 +13,8 @@ const pool = new Pool({
   ssl: useSsl ? { rejectUnauthorized: false } : false,
 });
 
+// Convert MySQL-style ? placeholders into PostgreSQL $1, $2, ... bindings.
+// This lets existing query strings remain unchanged while using the pg client.
 const adaptQuery = (text, params = []) => {
   let index = 0;
   const sql = text.replace(/\?/g, () => `$${++index}`);
