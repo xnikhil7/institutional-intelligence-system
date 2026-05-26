@@ -1,5 +1,5 @@
 (function(){
-  const renderBackend = "https://iis-backend.onrender.com";
+  const renderBackend = "https://institutional-intelligence-system.onrender.com";
   const API_HOST = window.location.hostname === "localhost"
     ? "http://localhost:5000"
     : renderBackend;
