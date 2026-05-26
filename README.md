@@ -5,7 +5,7 @@ A full-stack institutional management platform built with Node.js, Express, Supa
 
 ## Live Demo
 
-Frontend: https://iis-client.vercel.app
+https://iis-client.vercel.app
 
 ## Features
 
