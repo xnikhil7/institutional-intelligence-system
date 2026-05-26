@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>IIS : Admin</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="shortcut icon" href="./WhatsApp Image 2026-01-21 at 1.35.17 PM.jpeg" type="image/x-icon">
+</head>
+
+<body>
+    <script>
+const token = localStorage.getItem("token");
+const role = localStorage.getItem("role");
+
+if(!token || role!=="ADMIN"){
+  alert("Unauthorized");
+  location="login.html";
+}
+</script>
+
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+<div class="logo">
+<h3>Institutional Intelligence System for Academics and Resource Management</h3>
+
+</div>
+<hr><br>
+
+<div class="nav">
+<button class="active" onclick="show('dashboard',this)">Dashboard</button>
+<button onclick="show('resources',this)">Resources</button>
+<button onclick="show('library',this)">Library</button>
+<button onclick="show('notices',this)">Notices</button>
+<button onclick="show('timetable',this)">Timetable</button>
+<button onclick="show('fees',this)">Fees</button>
+<button onclick="show('account',this)">Account Settings</button>
+</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="topbar">
+<div>
+<h3>Admin Dashboard</h3>
+<p style="font-size:12px">Manage college data & resources</p>
+</div>
+
+<div>
+<button class="theme-btn" style="cursor: default;"><span id="adminName">Logged in: Admin</span>
+</button>
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark</button>
+<button class="logout" onclick="logout()">Logout</button>
+</div>
+</div>
+
+<!-- SECTIONS -->
+<div id="dashboard" class="section active">
+<div class="card"><h3>Dashboard</h3><p>Welcome Admin</p></div>
+<div class="card">
+<h4>ADD USERS</h4>
+
+  <div class="usr">
+  <input id="name" placeholder="Name">
+  <select id="userRole" required>
+    <option value="" disabled selected>Select Role</option>
+    <option value="STUDENT">Student</option>
+    <option value="FACULTY">Faculty</option>
+    <option value="ADMIN">Admin</option>
+  </select>
+</div>
+
+
+<input id="email" placeholder="Email">
+<input id="password" placeholder="Password">
+
+<div id="studentFields" style="display:none">
+
+<select id="branch">
+<option value="">Branch</option>
+<option value="CS">CS</option>
+<option value="IT">IT</option>
+<option value="AIML">AIML</option>
+<option value="IOT">IOT</option>
+<option value="MECH">Mechanical</option>
+</select>
+
+<select id="year">
+<option value="">Year</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+</select>
+
+<select id="caste">
+<option value="OPEN">OPEN</option>
+<option value="OBC">OBC</option>
+<option value="SC">SC</option>
+<option value="ST">ST</option>
+</select>
+
+<input id="aadhar" placeholder="Aadhar Number">
+
+</div>
+<button class="btn" onclick="createUser()">Create User</button>
+</div>
+
+<div class="card" id="getUser">
+<h4>ALL USERS</h4>
+<div class="role-filters sem-toggle" style="margin-bottom: 15px; display: inline-flex;">
+  <button class="sem-btn active" id="filter-ALL" onclick="setRoleFilter('ALL')">All</button>
+  <button class="sem-btn" id="filter-ADMIN" onclick="setRoleFilter('ADMIN')">Admin</button>
+  <button class="sem-btn" id="filter-FACULTY" onclick="setRoleFilter('FACULTY')">Faculty</button>
+  <button class="sem-btn" id="filter-STUDENT" onclick="setRoleFilter('STUDENT')">Student</button>
+</div>
+<input id="userSearch" class="search" placeholder="Search users..." oninput="filterUsers()">
+
+<div id="userList"></div>
+</div>
+
+</div>
+
+<div id="resources" class="section">
+<div class="card">
+<h3>Add Resource</h3>
+
+<input id="rname" placeholder="Room/Lab Name">
+<input id="rcap" placeholder="Capacity">
+<input id="rdesc" placeholder="Description">
+
+<button class="btn" onclick="addResource()">Add</button>
+</div>
+
+<div class="card" style="display:none">
+<h4>All Resources</h4>
+<input id="resourceSearch" class="search" placeholder="Search resources..." oninput="filterResources()">
+
+<div id="resourceList"></div>
+</div>
+
+<div class="card">
+  <div id="facultyResources"></div>
+</div>
+
+<div class="card">
+
+<h3>Market Price Analyzer</h3>
+
+<input id="productName" placeholder="Product name">
+<input id="quantity" type="number" placeholder="Quantity">
+
+<button onclick="checkAI()" class="btn">Check Market Price</button>
+
+<div id="aiResult" style="margin-top:15px;"></div>
+
+</div>
+
+</div>
+
+<div id="library" class="section">
+
+  <div class="card">
+    <h3>Add Book</h3>
+
+    <input id="bname" placeholder="Book Name">
+    <input id="bauthor" placeholder="Author">
+
+    <select id="bstatus">
+      <option value="Available">Available</option>
+      <option value="Issued">Issued</option>
+      <option value="Maintenance">Maintenance</option>
+    </select>
+
+    <button class="btn" onclick="addBook()">Add Book</button>
+  </div>
+
+  <div class="card">
+    <h4>All Books</h4>
+    <input id="bookSearch" class="search" placeholder="Search books..." oninput="filterBooks()">
+
+    <div id="bookList"></div>
+  </div>
+
+</div>
+
+
+<div id="notices" class="section">
+
+  <div class="card">
+    <h3>Post Notice</h3>
+
+    <input id="ntitle" placeholder="Title">
+    <input id="nmsg" placeholder="Message">
+
+    <button class="btn" onclick="addNotice()">Post</button>
+  </div>
+
+  <div class="card">
+    <h4>All Notices</h4>
+    <input id="noticeSearch" class="search" placeholder="Search notices..." oninput="filterNotices()">
+
+    <div id="noticeList"></div>
+  </div>
+
+</div>
+
+
+<div id="timetable" class="section">
+  <div class="card">
+    <h3>Exam Timetable</h3>
+
+    <input id="tYear" placeholder="Year (FE/SE/TE/BE)">
+    <input id="tBranch" placeholder="Branch (IT/CS/EXTC)">
+    <input id="tDate" type="date" style="color: var(--text);">
+    <input id="tTime" type="time" style="color: var(--text);">
+    <input id="tSubject" placeholder="Subject">
+
+    <button class="btn" onclick="addTimetable()">Add Exam</button>
+  </div>
+
+  <div class="card">
+    <h3>All Exams</h3>
+
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr style="text-align:left; border-bottom:1px solid var(--border);">
+          <th>Year</th>
+          <th>Branch</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Subject</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody id="ttList"></tbody>
+    </table>
+  </div>
+</div>
+
+
+
+
+<div id="fees" class="section">
+
+<div class="card" id="feeSearchCard">
+  <h3>Search Pending Fees</h3>
+
+  <div style="display: flex; gap: 10px;">
+    <input id="searchValue" placeholder="Enter Email or Aadhar" style="flex:1;">
+    <button class="btn" style="margin-top:0;" onclick="searchPending()">Search</button>
+  </div>
+
+  <div id="searchResult" style="margin-top:20px;"></div>
+</div>
+
+ 
+  <!-- ALL TEMPLATES -->
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+  <h3>All Fee Templates</h3>
+  <button class="btn" onclick="openTemplateModal()">+ Add Template</button>
+</div>
+  <div id="templateList"></div>
+
+</div>
+
+<!-- ACCOUNT SETTINGS -->
+<div id="account" class="section">
+  <div class="card">
+    <h3>Update Account Profile</h3>
+    <input id="accName" placeholder="Update Name">
+    <input id="accEmail" placeholder="Update Email (Required)">
+    <input id="accPassword" type="password" placeholder="New Password (leave blank to keep current)">
+    <button class="btn" onclick="updateAccount()">Save Changes</button>
+  </div>
+</div>
+
+
+</div>
+
+<style>
+/* Adjust body to handle dynamic scroll hiding */
+body { transition: overflow 0.3s }
+</style>
+
+<div id="modal-root">
+  <!-- Student Detail Modal -->
+  <div id="studentDetailModal" class="modal-overlay" style="display:none;" onclick="closeModalOnOutsideClick(event)">
+    <div class="modal-box" style="width: 450px; text-align: left;">
+      <h3 style="margin-bottom: 20px; text-align:center;">Student Details</h3>
+      <div id="sd-content" style="margin-bottom: 25px; line-height: 1.6;"></div>
+      <div class="global-modal-buttons" style="flex-wrap: wrap; display:flex; justify-content:center; gap:12px;">
+        <!-- <button class="btn" onclick="openUpdateProfileModal()">Update Profile</button> -->
+        <button class="btn" onclick="openStudentManageFees()">Manage Fees</button>
+        <button class="delBtn" onclick="deleteCurrentStudent()">Delete Profile</button>
+        <button class="btn" style="background:var(--muted);" onclick="closeAllModals()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="templateModal" class="modal-overlay" style="display:none;" onclick="closeModalOnOutsideClick(event)">
+    <div class="modal-box">
+
+      <h3>Create / Update Fee Template</h3>
+
+      <select id="fBranch">
+        <option value="">Select Branch</option>
+        <option value="CS">CS</option>
+        <option value="IT">IT</option>
+        <option value="AIML">AIML</option>
+        <option value="IOT">IoT</option>
+        <option value="MECH">Mechanical</option>
+      </select>
+
+      <select id="fYear">
+        <option value="">Select Year</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+
+      <select id="fCaste">
+        <option value="OPEN">OPEN</option>
+        <option value="OBC">OBC</option>
+        <option value="SC">SC</option>
+        <option value="ST">ST</option>
+      </select>
+
+      <input id="fTuition" placeholder="Tuition Fee">
+      <input id="fDev" placeholder="Development Fee">
+      <input id="fExam" placeholder="Exam Fee">
+      <input id="fOther" placeholder="Other Fee">
+
+      <div style="display:flex; justify-content:center; gap:12px; margin-top:20px;">
+        <button class="btn" style="margin:0;" onclick="saveTemplate()">Save</button>
+        <button class="delBtn" style="margin:0;" onclick="closeTemplateModal()">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Manage Fees Modal -->
+  <div id="manageFeesModal" class="modal-overlay" style="display:none;" onclick="closeModalOnOutsideClick(event)">
+    <div class="modal-box" style="width: 400px; text-align: left;">
+      <h3 style="margin-bottom: 20px; text-align:center;">Manage Fees</h3>
+      <input type="hidden" id="manageFeeId">
+      
+      <label style="color:var(--muted); font-size:14px; margin-bottom:5px; display:block;">Total Fees (₹)</label>
+      <input id="manageTotal" type="number" placeholder="Total Fees" oninput="calculatePending()">
+      
+      <label style="color:var(--muted); font-size:14px; margin-bottom:5px; display:block;">Amount Paid (₹)</label>
+      <input id="managePaid" type="number" placeholder="Paid Amount" oninput="calculatePending()">
+      
+      <div style="margin-bottom: 20px; color:var(--text); text-align: center;">
+        <strong>Pending: </strong> <span id="managePendingDisplay" style="color:var(--danger)">₹0</span>
+      </div>
+      
+      <div class="global-modal-buttons" style="display:flex; justify-content:center; gap:12px;">
+        <button class="btn" style="margin:0;" onclick="submitManageFees()">Save Changes</button>
+        <button class="delBtn" style="margin:0;" onclick="closeManageFees()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id,btn){
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+if(id === "fees"){
+  loadTemplates();
+}
+if(id === "account"){
+  loadAccountTab();
+}
+
+}
+
+function toggleTheme(){
+document.body.classList.toggle("light");
+themeBtn.innerText =
+document.body.classList.contains("light") ? "☀️ Light" : "🌙 Dark";
+}
+
+function logout(){
+localStorage.clear();
+location="login.html";  
+}
+</script>
+<script src="js/api.js"></script>
+
+<script src="js/users.js"></script>
+<script src="js/resources.js"></script>
+<script src="js/library.js"></script>
+<script src="js/notices.js"></script>
+<script src="js/timetable.js"></script>
+<script src="js/fees.js"></script>
+<script src="js/calendar.js"></script>
+
+<script src="js/admin.js"></script>
+
+<script src="http://localhost:5000/socket.io/socket.io.js"></script>
+<script>
+  const socket = io("http://localhost:5000");
+
+  socket.emit("joinRoom", role);
+
+  socket.on("connect", ()=>{
+    console.log("Connected to socket server");
+  });
+
+socket.emit("joinRoom","ADMIN");
+
+socket.on("issueCreated",()=>{
+  loadIssues();
+});
+
+socket.on("noticeCreated",()=>{
+  loadNotices();
+});
+
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light");
+      const tb = document.getElementById("themeBtn");
+      if(tb) tb.innerText = "☀️ Light";
+    }
+
+    const oldToggle = window.toggleTheme;
+    if(oldToggle) {
+      window.toggleTheme = function() {
+        oldToggle();
+        localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
+      };
+    }
+
+    const oldShow = window.show;
+    if(oldShow) {
+      window.show = function(id, btn) {
+        oldShow(id, btn);
+        localStorage.setItem("activePage", id);
+      };
+    }
+
+    const activePage = localStorage.getItem("activePage");
+    if(activePage) {
+       const btn = document.querySelector(`.nav button[onclick*="'${activePage}'"]`) || 
+                   document.querySelector(`.nav button[onclick*='"${activePage}"']`);
+       if(btn) show(activePage, btn);
+    }
+  });
+</script>
+</body>
+</html>

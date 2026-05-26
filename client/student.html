@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>IIS : Student</title>
+
+
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="shortcut icon" href="./WhatsApp Image 2026-01-21 at 1.35.17 PM.jpeg" type="image/x-icon">
+
+  
+</head>
+
+<body>
+  <script>
+const token = localStorage.getItem("token");
+if(!token){
+  alert("Login first");
+  location="login.html";
+}
+
+</script>
+
+
+<div class="app">
+
+<div class="sidebar">
+<h3 style="margin-top: 10px;">Institutional Intelligence System for Academics and Resource Management</h3>
+
+<hr><br>
+
+<div class="nav">
+<button class="active" onclick="show('dashboard',this)">Dashboard</button>
+<button onclick="show('attendance',this)">Attendance</button>
+<button onclick="show('results',this)">Results</button>
+<button onclick="show('timetable',this)">Timetable</button>
+<button onclick="show('notices',this)">Notices</button>
+<button onclick="show('library',this)">Library</button>
+<button onclick="show('fees',this)">Fees</button>
+<button onclick="show('calendar',this)">Academic Calendar</button>
+<button onclick="show('account',this)">Account Settings</button>
+</div>
+</div>
+
+<div class="main">
+
+<div class="topbar">
+<div><h3>Student Dashboard</h3></div>
+<div>
+<button class="theme-btn" id="student">Please log in</button>
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark</button>
+<button class="logout" onclick="logout()">Logout</button>
+</div>
+</div>
+
+<div id="dashboard" class="section active" >
+<div class="card" style="display: inline-block;width: 100%;"><h3>Welcome Student</h3></div>
+<div class="home" style="display: flex;">
+
+
+  <div class="card" style="display: inline-block; width: 50%;margin: 10px;">
+<h3>Today's Information</h3>
+
+<p id="todayDate"></p>
+<p id="todayEvent"></p>
+</div>
+
+<div class="card" style="display: inline-block; width: 50%;margin: 10px;">
+<h3>Attendance Summary</h3><br><hr><br>
+<div id="dashAttendance" class="home"></div>
+</div>
+
+<div class="card" style="display: inline-block; width: 50%;margin: 10px;">
+<h3>Latest Notice</h3><br><hr><br>
+<div id="latestNotice"></div>
+</div>
+
+<div class="card" style="display: inline-block; width: 50%;margin: 10px;">
+  <h3>Latest Issue</h3><br><hr><br>
+  <div id="latestIssue">No issue raised</div>
+</div>
+</div>
+
+</div>
+
+<div id="attendance" class="section">
+
+  <!-- CARD 1 -->
+  <div class="card">
+  <h3>Ongoing Lectures</h3><br><br>
+
+  <div id="lectureList"></div>
+  </div>
+
+  <!-- CARD 2 -->
+  <div class="card" id="attendanceCard">
+    <h3>Attendance Overview</h3><br>
+    <div id="attendanceList"></div>
+  </div>
+
+</div>
+
+
+
+<div id="results" class="section">
+  <div class="card">
+    <h3>View Results</h3><br><br>
+
+    <table id="resultsTable" width="100%" border="1" style="border-collapse:collapse;text-align:center;">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Internal</th>
+          <th>External</th>
+          <th>Total</th>
+          <th>Semester</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+  </div>
+  <div class="card">
+    <h3>Result Updates</h3>
+    <div id="issueTracker"></div>
+  </div>
+</div>
+
+<!-- Modal Root -->
+<div id="modal-root">
+<div id="issueModal" class="modal-overlay" style="display:none;" onclick="closeModalOnOutsideClick(event)">
+  <div class="modal-box" style="width:350px; text-align: left;">
+    <h3 style="margin-bottom:20px; text-align:center;">Raise Issue</h3>
+
+    <textarea id="issueText"
+     style="width:100%;
+     height:80px;
+     padding:10px;
+     border-radius:8px;
+     background: transparent;
+     color: var(--text);
+     border: 1px solid var(--border);"></textarea><br><br>
+
+    <div style="display:flex; justify-content:center; gap:12px;">
+      <button onclick="submitIssue()" class="btn" style="margin:0;">Submit</button>
+      <button onclick="closeAllModals()" class="delBtn" style="margin:0;">Cancel</button>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div id="notices" class="section">
+<div class="card">
+<h3>Notices</h3><br><br>
+<div id="noticeList"></div>
+</div>
+</div>
+
+<div id="fees" class="section">
+  <div class="card">
+    <h3>My Fees</h3>
+    <div id="feesContainer"></div>
+  </div>
+</div>
+
+
+
+<div id="calendar" class="section">
+
+<div class="card">
+<h3>Academic Calendar</h3>
+
+<br>
+
+<div class="sem-toggle">
+
+<div class="slider" id="semSlider"></div>
+
+<button id="evenBtn" class="sem-btn active" onclick="showSem('even')">
+Even Semester
+</button>
+
+<button id="oddBtn" class="sem-btn" onclick="showSem('odd')">
+Odd Semester
+</button>
+
+</div>
+
+<br><br>
+
+<!-- EVEN SEM -->
+<div id="evenSem">
+
+<div class="calendar">
+
+<div class="month">
+<h4>January 2026</h4>
+
+<div class="event">
+<span class="date">5 Jan</span>
+<span class="text">Commencement of Classes (FE & SE)</span>
+</div>
+
+<div class="event">
+<span class="date">12-17 Jan</span>
+<span class="text">NSS Camp</span>
+</div>
+
+<div class="event">
+<span class="date">22-24 Jan</span>
+<span class="text">Unit Test-1</span>
+</div>
+
+<div class="event">
+<span class="date">26 Jan</span>
+<span class="text">Republic Day Celebration</span>
+</div>
+
+</div>
+
+
+<div class="month">
+<h4>February 2026</h4>
+
+<div class="event">
+<span class="date">2-6 Feb</span>
+<span class="text">Cultural Days</span>
+</div>
+
+<div class="event">
+<span class="date">11 Feb</span>
+<span class="text">Industrial Visit</span>
+</div>
+
+</div>
+
+
+<div class="month">
+<h4>March 2026</h4>
+
+<div class="event">
+<span class="date">9-15 Mar</span>
+<span class="text">Midterm Submission</span>
+</div>
+
+<div class="event">
+<span class="date">17-20 Mar</span>
+<span class="text">Department Level Association Activity</span>
+</div>
+
+</div>
+
+
+<div class="month">
+<h4>April 2026</h4>
+
+<div class="event">
+<span class="date">9-11 Apr</span>
+<span class="text">Unit Test-II</span>
+</div>
+
+<div class="event">
+<span class="date">13-17 Apr</span>
+<span class="text">Submission of Term Work</span>
+</div>
+
+<div class="event exam">
+<span class="date">20 Apr – 2 May</span>
+<span class="text">Practical / Oral Examination</span>
+</div>
+
+</div>
+
+
+<div class="month">
+<h4>May 2026</h4>
+
+<div class="event exam">
+<span class="date">11 May – 30 May</span>
+<span class="text">Theory Examination</span>
+</div>
+
+</div>
+
+
+<div class="month">
+<h4>June 2026</h4>
+
+<div class="event exam">
+<span class="date">2-15 Jun</span>
+<span class="text">KT Theory Examination</span>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ODD SEM -->
+<div id="oddSem" style="display:none;">
+
+<div class="calendar">
+
+<div class="month">
+<h4>July 2026</h4>
+<div class="event">
+<span class="date">1 Jul</span>
+<span class="text">Commencement of Classes</span>
+</div>
+</div>
+
+<div class="month">
+<h4>August 2026</h4>
+<div class="event">
+<span class="date">15 Aug</span>
+<span class="text">Independence Day Celebration</span>
+</div>
+</div>
+
+<div class="month">
+<h4>September 2026</h4>
+<div class="event">
+<span class="date">10-15 Sep</span>
+<span class="text">Mid Term Submission</span>
+</div>
+</div>
+
+<div class="month">
+<h4>October 2026</h4>
+<div class="event">
+<span class="date">20 Oct</span>
+<span class="text">Unit Test</span>
+</div>
+</div>
+
+<div class="month">
+<h4>November 2026</h4>
+<div class="event exam">
+<span class="date">15-30 Nov</span>
+<span class="text">Theory Examination</span>
+</div>
+</div>
+
+<div class="month">
+<h4>December 2026</h4>
+<div class="event exam">
+<span class="date">5-10 Dec</span>
+<span class="text">Practical Examination</span>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ACCOUNT SETTINGS -->
+<div id="account" class="section">
+  <div class="card">
+    <h3>Update Account Profile</h3>
+    <input id="accName" placeholder="Update Name">
+    <input id="accEmail" placeholder="Update Email (Required)">
+    <input id="accPassword" type="password" placeholder="New Password (leave blank to keep current)">
+    <button class="btn" onclick="updateAccount()">Save Changes</button>
+  </div>
+</div>
+
+<!-- LIBRARY -->
+<div id="library" class="section">
+  <div class="card">
+    <h3>Library Books</h3>
+    <table width="100%" border="1" style="border-collapse:collapse; text-align:center;">
+  <thead>
+    <tr>
+      <th>Book Name</th>
+      <th>Author</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody id="studentLibraryList"></tbody>
+</table>
+  </div>
+</div>
+
+<!-- TIMETABLE -->
+<div id="timetable" class="section">
+  <div class="card">
+    <h3>Exam Timetable</h3>
+    <table width="100%" border="1" style="border-collapse:collapse; text-align:center;">
+  <thead>
+    <tr>
+      <th>Year</th>
+      <th>Branch</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Subject</th>
+    </tr>
+  </thead>
+  <tbody id="studentTimetableList"></tbody>
+</table>
+  </div>
+</div>
+
+<script>
+  function showSem(sem){
+
+const even = document.getElementById("evenSem");
+const odd = document.getElementById("oddSem");
+
+const evenBtn = document.getElementById("evenBtn");
+const oddBtn = document.getElementById("oddBtn");
+
+if(sem === "even"){
+even.style.display = "block";
+odd.style.display = "none";
+
+evenBtn.classList.add("active");
+oddBtn.classList.remove("active");
+}
+
+else{
+even.style.display = "none";
+odd.style.display = "block";
+
+oddBtn.classList.add("active");
+evenBtn.classList.remove("active");
+}
+
+}
+</script>
+
+<script>
+function show(id,btn){
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+if(id==="attendance"){
+ loadAttendance();
+ loadActiveSessions();
+}
+if(id==="results"){
+ loadResults();
+}
+if(id==="notices"){
+ loadNotices();
+}
+if(id==="fees"){
+  loadFees();
+}
+if(id==="resources"){
+  loadResources();
+}
+if(id==="account"){
+  loadAccountTab();
+}
+if(id==="library"){
+  loadStudentLibrary();
+}
+if(id==="timetable"){
+  loadStudentTimetable();
+}
+}
+
+
+
+function toggleTheme(){
+document.body.classList.toggle("light");
+themeBtn.innerText =
+document.body.classList.contains("light") ? "☀️ Light" : "🌙 Dark";
+}
+
+function logout(){
+localStorage.clear();
+location="login.html";
+}
+</script>
+<script src="http://localhost:5000/socket.io/socket.io.js"></script>
+<script src="js/api.js" charset="utf-8"></script>
+<script src="js/student.js" charset="utf-8"></script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light");
+      const tb = document.getElementById("themeBtn");
+      if(tb) tb.innerText = "☀️ Light";
+    }
+
+    const oldToggle = window.toggleTheme;
+    if(oldToggle) {
+      window.toggleTheme = function() {
+        oldToggle();
+        localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
+      };
+    }
+
+    const oldShow = window.show;
+    if(oldShow) {
+      window.show = function(id, btn) {
+        oldShow(id, btn);
+        localStorage.setItem("activePage", id);
+      };
+    }
+
+    const activePage = localStorage.getItem("activePage");
+    if(activePage) {
+       const btn = document.querySelector(`.nav button[onclick*="'${activePage}'"]`) || 
+                   document.querySelector(`.nav button[onclick*='"${activePage}"']`);
+       if(btn) show(activePage, btn);
+    }
+  });
+</script>
+</body>
+</html>

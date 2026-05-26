@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>IIS : Student Signup</title>  
+<link rel="shortcut icon" href="./WhatsApp Image 2026-01-21 at 1.35.17 PM.jpeg" type="image/x-icon">
+
+
+<style>
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+    -webkit-text-fill-color: #fff !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+  body{
+  margin:0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #111827 0%, #0f172a 20%, #2563eb 100%);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  color:white;
+}
+
+.card{
+  width: 360px;
+  padding: 40px 35px;
+  border-radius: 20px;
+  background: rgba(17, 24, 39, 0.75);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  animation: fadeInContainer 0.8s ease forwards;
+}
+
+@keyframes fadeInContainer {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card h2{
+  margin-bottom: 30px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Input wrapper */
+.input-group{
+  position: relative;
+  margin-bottom: 25px;
+}
+
+input{
+  width:100%;
+  padding:12px 0;
+  background:transparent;
+  border:none;
+  border-bottom:1px solid rgba(255,255,255,0.3);
+  color:white;
+  font-size:14px;
+  outline:none;
+  transition: all 0.3s ease;
+}
+
+input::placeholder{
+  color: rgba(255,255,255,0.6);
+  letter-spacing:0.5px;
+}
+
+input:focus{
+  border-bottom:1px solid #2563eb;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  margin-top:15px;
+  border:none;
+  border-radius:12px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color:white;
+  font-weight:600;
+  letter-spacing:0.5px;
+  cursor:pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(37,99,235,0.4);
+}
+
+button:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(37,99,235,0.6);
+}
+
+.msg{
+  margin-top:15px;
+  font-size:13px;
+  color:#f87171;
+  min-height:18px;
+}
+a{
+  
+  color: white;  
+}
+a:hover{
+  color: #f87171;
+  text-decoration: none;
+}
+select{
+    padding: 12px;
+    background-color: transparent;
+    color: rgba(255,255,255,0.6);
+    margin-top: 12px;
+    margin-right: 5px;
+    border-radius: 5px;
+}
+option{
+    color: #1d4ed8;
+    background-color: transparent;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<h2>Student Signup</h2>
+
+<input id="name" placeholder="Full Name">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<input id="aadhar" placeholder="Aadhar Number">
+
+<select id="branch">
+  <option value="">Select Branch</option>
+  <option value="IT">IT</option>
+  <option value="CS">CS</option>
+  <option value="AIML">AIML</option>
+  <option value="IOT">Iot</option>
+  <option value="MECH">Mechanical</option>
+</select>
+
+<select id="year">
+  <option value="">Select Year</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+</select>
+
+<select id="caste">
+  <option value="OPEN">OPEN</option>
+  <option value="OBC">OBC</option>
+  <option value="SC">SC</option>
+  <option value="ST">ST</option>
+</select>
+
+<button onclick="signup()">Create Account</button>
+
+<p style="margin-top:15px;">
+Already have account?
+<a href="login.html" style="color:#60a5fa;">Login</a>
+</p>
+
+</div>
+
+<script>
+async function signup(){
+
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const aadhar = document.getElementById("aadhar").value.trim();
+  const branch = document.getElementById("branch").value;
+  const year = document.getElementById("year").value;
+  const caste = document.getElementById("caste").value;
+
+  if(!name || !email || !password || !branch || !year || !caste || !aadhar){
+    alert("All fields required");
+    return;
+  }
+  if(!/^\d{12}$/.test(aadhar)){
+    alert("Aadhar Number invalid");
+    return;
+  }
+  if(!/^\S+@\S+\.\S+$/.test(email)){
+    alert("Invalid email format");
+    return;
+  }
+
+  const res = await fetch("http://localhost:5000/api/auth/register",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      name,
+      email,
+      password,
+      branch,
+      year,
+      caste,
+      aadhar
+    })
+  });
+
+  const data = await res.json();
+
+if(!res.ok){
+  alert(data.error || "Something went wrong");
+  return;
+}
+
+alert(data.msg);
+location = "login.html";
+
+  
+}
+</script>
+
+</body>
+</html>

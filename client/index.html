@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>IIS Login</title>
+<link rel="shortcut icon" href="./WhatsApp Image 2026-01-21 at 1.35.17 PM.jpeg" type="image/x-icon">
+
+
+<style>
+  input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+    -webkit-text-fill-color: #fff !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+  body{
+  margin:0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #111827 0%, #0f172a 20%, #2563eb 100%);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  color:white;
+}
+
+.card{
+  width: 360px;
+  padding: 40px 35px;
+  border-radius: 20px;
+  background: rgba(17, 24, 39, 0.75);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  animation: fadeInContainer 0.8s ease forwards;
+}
+
+@keyframes fadeInContainer {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card h2{
+  margin-bottom: 30px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Input wrapper */
+.input-group{
+  position: relative;
+  margin-bottom: 25px;
+}
+
+input{
+  width:100%;
+  padding:12px 0;
+  background:transparent;
+  border:none;
+  border-bottom:1px solid rgba(255,255,255,0.3);
+  color:white;
+  font-size:14px;
+  outline:none;
+  transition: all 0.3s ease;
+}
+
+input::placeholder{
+  color: rgba(255,255,255,0.6);
+  letter-spacing:0.5px;
+}
+
+input:focus{
+  border-bottom:1px solid #2563eb;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  margin-top:15px;
+  border:none;
+  border-radius:12px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color:white;
+  font-weight:600;
+  letter-spacing:0.5px;
+  cursor:pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(37,99,235,0.4);
+}
+
+button:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(37,99,235,0.6);
+}
+
+.msg{
+  margin-top:15px;
+  font-size:13px;
+  color:#f87171;
+  min-height:18px;
+}
+a{
+  
+  color: #2563eb;  
+}
+a:hover{
+  text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<h2>IIS Login</h2>
+
+<div class="input-group">
+  <input id="email" placeholder="Email">
+</div>
+
+<div class="input-group">
+  <input id="pass" type="password" placeholder="Password">
+</div>
+
+<button onclick="login()">Login</button>
+<p>
+Don't have account?
+<a href="signup.html">Signup</a>
+</p>
+<div class="msg" id="msg"></div>
+</div>
+
+
+<script>
+async function login(){
+  const email = emailEl().value;
+  const password = passEl().value;
+
+  if(!email || !password){
+    msgEl().innerText="Enter credentials";
+    return;
+  }
+
+  try{
+    const res = await fetch("http://localhost:5000/api/auth/login",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({email,password})
+    });
+
+    const data = await res.json();
+    console.log("LOGIN DATA:", data);
+
+    if(!res.ok){
+      msgEl().innerText = data.msg || "Login failed";
+      return;
+    }
+
+    const role = data.user.role;
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("name", data.user.name);
+    localStorage.setItem("role", role);
+
+    if(role==="ADMIN") location="admin.html";
+    else if(role==="FACULTY") location="faculty.html";
+    else if(role==="STUDENT") location="student.html";
+    else msgEl().innerText="Unknown role: "+role;
+
+  }catch(err){
+    msgEl().innerText="Server error";
+    console.error(err);
+  }
+}
+
+function emailEl(){ return document.getElementById("email"); }
+function passEl(){ return document.getElementById("pass"); }
+function msgEl(){ return document.getElementById("msg"); }
+</script>
+
+
+
+</body>
+</html>

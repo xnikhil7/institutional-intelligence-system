@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>IIS : Faculty</title>
+
+
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="shortcut icon" href="./WhatsApp Image 2026-01-21 at 1.35.17 PM.jpeg" type="image/x-icon">
+
+</head>
+
+<body>
+    <script>
+const token = localStorage.getItem("token");
+const role = localStorage.getItem("role");
+
+if(!token || role!=="FACULTY"){
+  alert("Unauthorized");
+  location="login.html";
+}
+</script>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+<h3 style="margin-top:10px;">Institutional Intelligence System for Academics and Resource Management</h3>
+
+
+<hr><br>
+
+<div class="nav">
+<button class="active" onclick="show('dashboard',this)">Dashboard</button>
+<button onclick="show('attendance',this)">Attendance</button>
+<button onclick="show('reports',this)">Reports</button>
+<button onclick="show('results',this)">Results</button>
+<button onclick="show('issues',this)">Result Issues</button>
+<button onclick="show('notices',this)">Notices</button>
+<button onclick="show('resources',this)">Resources</button>
+<button onclick="show('library',this)">Library</button>
+<button onclick="show('timetable',this)">Timetable</button>
+<button onclick="show('calendar',this)">Academic Calendar</button>
+<button onclick="show('account',this)">Account Settings</button>
+</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="topbar">
+<div><h3>Faculty Dashboard</h3></div>
+
+<div>
+<button class="theme-btn" id="facName"></button>
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark</button>
+<button class="logout" onclick="logout()">Logout</button>
+</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="section active">
+<div class="card">
+<h3>Welcome Faculty</h3>
+</div>
+
+<div style="
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:20px;
+  ">
+
+
+  <div class="card">
+    <h3>Today's Information</h3>
+
+<p id="todayDate"></p>
+<p id="todayEvent"></p>
+</div>
+
+  <div class="card">
+    <h3>New Issues</h3>
+    <hr><br>
+    <div id="dashboardIssues">Loading...</div>
+  </div>
+
+  <div class="card">
+    <h3>Latest Notices</h3>
+    <hr><br>
+    <div id="dashboardNotices">Loading...</div>
+  </div>
+                    
+  <div class="card">
+    <h3>To-Do List</h3>
+    <hr><br>
+
+    <input id="todoInput" placeholder="Add new task">
+    <button class="btn" onclick="addTodo()">Add</button>
+
+    <div id="todoList" style="margin-top:15px;"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ATTENDANCE -->
+<div id="attendance" class="section">
+<div class="card">
+<h3>Start Attendance Session</h3>
+
+<input placeholder="Subject" id="sub">
+<button class="btn" onclick="createSession()">Start Session</button>
+</div>
+</div>
+
+<!-- REPORTS -->
+<div id="reports" class="section">
+  <div class="card">
+    <h3>Attendance Report</h3>
+
+    <div class="card" style="margin-top:15px; padding:15px;">
+  
+  <input type="text" 
+         id="reportSearch"
+         placeholder="Search student name..."
+         style="padding:8px; margin-right:10px;">
+
+  <select id="subjectFilter" class="btn">
+    <option value="">All Subjects</option>
+  </select>
+
+  <select id="sortOption" style="padding:8px;" class="btn">
+    <option value="latest">Sort: Latest First</option>
+    <option value="oldest">Sort: Oldest First</option>
+    <option value="subject">Sort: Subject</option>
+  </select>
+
+</div>
+
+    <button class="btn" onclick="loadReport()">Load Report</button>
+    <div id="reportContainer"></div>
+  </div>
+</div>
+
+
+
+
+
+<!-- RESULTS -->
+<div id="results" class="section">
+  <div class="card">
+    <h3>Post Student Result</h3>
+    
+    <input id="sid" placeholder="Student ID">
+    <input id="subj" placeholder="Subject">
+    <label style="color: #8b95a7;">Internal Marks</label>
+<input id="int" type="number" value="0">
+
+<label style="color: #8b95a7;">External Marks</label>
+<input id="ext" type="number" value="0">
+    <input id="sem" placeholder="Exam">
+  <button class="btn" onclick="postResult()">Submit Result</button>
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <h3>All Results</h3>
+    <div style="display:flex; gap:10px; margin-top:15px; margin-bottom:15px;">
+      <select id="resSubjectFilter" class="btn" style="flex:1; margin:0; padding:10px; background:rgba(255,255,255,0.1);" onchange="loadResults()">
+        <option value="">All Subjects</option>
+      </select>
+      <select id="resExamFilter" class="btn" style="flex:1; margin:0; padding:10px; background:rgba(255,255,255,0.1);" onchange="loadResults()">
+        <option value="">All Exams / Semesters</option>
+      </select>
+      <button class="btn" onclick="loadResults()" style="margin:0; padding:10px 20px;">Refetch</button>
+    </div>
+    <div id="resultsContainer"></div>
+  </div>
+</div>
+
+    
+<!--ISSUES--> 
+<div id="issues" class="section">
+  <div class="card">
+    <h3>Result Issues</h3>
+    <button class="btn" onclick="loadIssues()">Refresh</button>
+    <br><br>
+    <div id="issueContainer"></div>
+  </div>
+</div>
+
+
+<!-- NOTICES -->
+<div id="notices" class="section">
+<div class="card">
+<h3>Post Notice</h3>
+
+<input id="ntitle" placeholder="Title">
+<input id="nmsg" placeholder="Message">
+
+<button class="btn" onclick="postNotice()">Post Notice</button>
+</div>
+
+<div class="card">
+<h3>All Notices</h3>
+<button class="btn" onclick="loadNotices()">Refresh</button><br><br>
+<div id="noticeList"></div>
+</div>
+</div>
+
+
+<!-- RESOURCES -->
+<div id="resources" class="section">
+  <div class="card">
+    <h3>Resources</h3>
+    <br>
+     <div id="facultyResources"></div>
+  </div>
+</div>
+
+<!-- CALENDAR -->
+<div id="calendar" class="section">
+
+<div class="card">
+<h3>Academic Calendar</h3>
+
+<br>
+
+<div class="sem-toggle">
+
+<div class="slider" id="semSlider"></div>
+
+<button id="evenBtn" class="sem-btn active" onclick="showSem('even')">
+Even Semester
+</button>
+
+<button id="oddBtn" class="sem-btn" onclick="showSem('odd')">
+Odd Semester
+</button>
+
+</div>
+
+<br><br>
+
+<!-- EVEN SEM -->
+<div id="evenSem">
+
+<div class="calendar">
+
+<div class="month">
+<h4>January 2026</h4>
+
+<div class="event">
+<span class="date">5 Jan</span>
+<span class="text">Commencement of Classes (FE & SE)</span>
+</div>
+
+<div class="event">
+<span class="date">12-17 Jan</span>
+<span class="text">NSS Camp</span>
+</div>
+
+<div class="event">
+<span class="date">22-24 Jan</span>
+<span class="text">Unit Test-1</span>
+</div>
+
+<div class="event">
+<span class="date">26 Jan</span>
+<span class="text">Republic Day Celebration</span>
+</div>
+
+</div>
+
+
+<div class="month">
+<h4>February 2026</h4>
+
+<div class="event">
+<span class="date">2-6 Feb</span>
+<span class="text">Cultural Days</span>
+</div>
+
+<div class="event">
+<span class="date">11 Feb</span>
+<span class="text">Industrial Visit</span>
+</div>
+
+</div>
+
+
+<div class="month">
+<h4>March 2026</h4>
+
+<div class="event">
+<span class="date">9-15 Mar</span>
+<span class="text">Midterm Submission</span>
+</div>
+
+<div class="event">
+<span class="date">17-20 Mar</span>
+<span class="text">Department Level Association Activity</span>
+</div>
+
+</div>
+
+
+<div class="month">
+<h4>April 2026</h4>
+
+<div class="event">
+<span class="date">9-11 Apr</span>
+<span class="text">Unit Test-II</span>
+</div>
+
+<div class="event">
+<span class="date">13-17 Apr</span>
+<span class="text">Submission of Term Work</span>
+</div>
+
+<div class="event exam">
+<span class="date">20 Apr – 2 May</span>
+<span class="text">Practical / Oral Examination</span>
+</div>
+
+</div>
+
+
+<div class="month">
+<h4>May 2026</h4>
+
+<div class="event exam">
+<span class="date">11 May – 30 May</span>
+<span class="text">Theory Examination</span>
+</div>
+
+</div>
+
+
+<div class="month">
+<h4>June 2026</h4>
+
+<div class="event exam">
+<span class="date">2-15 Jun</span>
+<span class="text">KT Theory Examination</span>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ODD SEM -->
+<div id="oddSem" style="display:none;">
+
+<div class="calendar">
+
+<div class="month">
+<h4>July 2026</h4>
+<div class="event">
+<span class="date">1 Jul</span>
+<span class="text">Commencement of Classes</span>
+</div>
+</div>
+
+<div class="month">
+<h4>August 2026</h4>
+<div class="event">
+<span class="date">15 Aug</span>
+<span class="text">Independence Day Celebration</span>
+</div>
+</div>
+
+<div class="month">
+<h4>September 2026</h4>
+<div class="event">
+<span class="date">10-15 Sep</span>
+<span class="text">Mid Term Submission</span>
+</div>
+</div>
+
+<div class="month">
+<h4>October 2026</h4>
+<div class="event">
+<span class="date">20 Oct</span>
+<span class="text">Unit Test</span>
+</div>
+</div>
+
+<div class="month">
+<h4>November 2026</h4>
+<div class="event exam">
+<span class="date">15-30 Nov</span>
+<span class="text">Theory Examination</span>
+</div>
+</div>
+
+<div class="month">
+<h4>December 2026</h4>
+<div class="event exam">
+<span class="date">5-10 Dec</span>
+<span class="text">Practical Examination</span>
+</div>
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- LIBRARY -->
+<div id="library" class="section">
+  <div class="card">
+    <h3>Library Books</h3>
+    <table width="100%" border="1" style="border-collapse:collapse; text-align:center;">
+  <thead>
+    <tr>
+      <th>Book Name</th>
+      <th>Author</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody id="facultyLibraryList"></tbody>
+</table>
+  </div>
+</div>
+
+<!-- ACCOUNT SETTINGS -->
+<div id="account" class="section">
+  <div class="card">
+    <h3>Update Account Profile</h3>
+    <input id="accName" placeholder="Update Name">
+    <input id="accEmail" placeholder="Update Email (Required)">
+    <input id="accPassword" type="password" placeholder="New Password (leave blank to keep current)">
+    <button class="btn" onclick="updateAccount()">Save Changes</button>
+  </div>
+</div>
+
+<!-- TIMETABLE -->
+<div id="timetable" class="section">
+  <div class="card">
+    <h3>Exam Timetable</h3>
+    <table width="100%" border="1" style="border-collapse:collapse; text-align:center;">
+  <thead>
+    <tr>
+      <th>Year</th>
+      <th>Branch</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Subject</th>
+    </tr>
+  </thead>
+  <tbody id="facultyTimetableList"></tbody>
+</table>
+  </div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<script>
+  function showSem(sem){
+
+const even = document.getElementById("evenSem");
+const odd = document.getElementById("oddSem");
+
+const evenBtn = document.getElementById("evenBtn");
+const oddBtn = document.getElementById("oddBtn");
+
+if(sem === "even"){
+even.style.display = "block";
+odd.style.display = "none";
+
+evenBtn.classList.add("active");
+oddBtn.classList.remove("active");
+}
+
+else{
+even.style.display = "none";
+odd.style.display = "block";
+
+oddBtn.classList.add("active");
+evenBtn.classList.remove("active");
+}
+
+}
+</script>
+<script>
+
+
+/* SIDEBAR NAV */
+function show(id,btn){
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+
+document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+
+ if(id === "resources"){
+   loadResources();
+ }
+ if(id === "library"){
+   loadFacultyLibrary();
+ }
+ if(id === "account"){
+   loadAccountTab();
+ }
+ if(id === "timetable"){
+   loadFacultyTimetable();
+ }
+
+}
+
+async function loadFacultyLibrary() {
+  try {
+    const data = await GET("/admin/books");
+    console.log("[FacultyLibrary] API response:", data);
+    const container = document.getElementById("facultyLibraryList");
+    if (!container) return;
+    if (!Array.isArray(data) || data.length === 0) {
+      const msg = (data && (data.error || data.msg)) || "No books available";
+      container.innerHTML = `<div style="width:100%; text-align:center; color:var(--muted); padding:20px;">${msg}</div>`;
+      return;
+    }
+    container.innerHTML = data.map(b => {
+
+  const status = (b.status || "").toLowerCase();
+
+  let color = "gray";
+
+  if (status === "available") color = "#90EE90";
+  else if (status === "issued") color = "coral";
+  else if (status === "maintenance") color = "orange";
+
+  return `
+    <tr>
+      <td>${b.name}</td>
+      <td>${b.author}</td>
+      <td style="color:${color}; font-weight:bold;">
+        ${b.status}
+      </td>
+    </tr>
+  `;
+}).join("");
+  } catch (err) {
+    console.error("[FacultyLibrary] Error:", err);
+    const container = document.getElementById("facultyLibraryList");
+    if (container) container.innerHTML = `<div style="color:var(--muted); padding:20px;">Failed to load library data.</div>`;
+  }
+}
+
+async function loadFacultyTimetable() {
+  try {
+    const data = await GET("/timetable");
+    console.log("[FacultyTimetable] API response:", data);
+    const container = document.getElementById("facultyTimetableList");
+    if (!container) return;
+    if (!Array.isArray(data) || data.length === 0) {
+      const msg = (data && (data.error || data.msg)) || "No timetable data available";
+      container.innerHTML = `<div style="text-align:center; color:var(--muted); padding:20px;">${msg}</div>`;
+      return;
+    }
+    container.innerHTML = data.map(e=>`
+  <tr>
+    <td>${e.year}</td>
+    <td>${e.branch}</td>
+    <td>${e.date}</td>
+    <td>${e.time}</td>
+    <td>${e.subject}</td>
+  </tr>
+`).join("");
+  } catch (err) {
+    console.error("[FacultyTimetable] Error:", err);
+    const container = document.getElementById("facultyTimetableList");
+    if (container) container.innerHTML = `<div style="text-align:center; color:var(--muted); padding:20px;">Failed to load timetable.</div>`;
+  }
+}
+
+/* THEME */
+function toggleTheme(){
+document.body.classList.toggle("light");
+themeBtn.innerText =
+document.body.classList.contains("light") ? "☀️ Light" : "🌙 Dark";
+}
+
+/* LOGOUT */
+function logout(){
+localStorage.clear();
+location="login.html";
+}
+
+</script>
+<script src="http://localhost:5000/socket.io/socket.io.js"></script>
+<script src="js/api.js"></script>
+<script src="js/resources.js"></script>
+<script src="js/faculty.js"></script>
+
+<!-- </script>
+  loadIssues();
+  loadNotices();
+  loadReport();
+  loadResources();
+  loadResults();
+</script> -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light");
+      const tb = document.getElementById("themeBtn");
+      if(tb) tb.innerText = "☀️ Light";
+    }
+
+    const oldToggle = window.toggleTheme;
+    if(oldToggle) {
+      window.toggleTheme = function() {
+        oldToggle();
+        localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
+      };
+    }
+
+    const oldShow = window.show;
+    if(oldShow) {
+      window.show = function(id, btn) {
+        oldShow(id, btn);
+        localStorage.setItem("activePage", id);
+      };
+    }
+
+    const activePage = localStorage.getItem("activePage");
+    if(activePage) {
+       const btn = document.querySelector(`.nav button[onclick*="'${activePage}'"]`) || 
+                   document.querySelector(`.nav button[onclick*='"${activePage}"']`);
+       if(btn) show(activePage, btn);
+    }
+  });
+</script>
+</body>
+</html>
