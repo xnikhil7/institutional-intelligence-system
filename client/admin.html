@@ -15,7 +15,7 @@ const role = localStorage.getItem("role");
 
 if(!token || role!=="ADMIN"){
   alert("Unauthorized");
-  location="login.html";
+  location="index.html";
 }
 </script>
 
@@ -392,7 +392,7 @@ document.body.classList.contains("light") ? "☀️ Light" : "🌙 Dark";
 
 function logout(){
 localStorage.clear();
-location="login.html";  
+location="index.html";  
 }
 </script>
 <script src="js/config.js"></script>

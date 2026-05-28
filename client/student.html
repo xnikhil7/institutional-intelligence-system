@@ -17,7 +17,7 @@
 const token = localStorage.getItem("token");
 if(!token){
   alert("Login first");
-  location="login.html";
+  location="index.html";
 }
 
 </script>
@@ -476,7 +476,7 @@ document.body.classList.contains("light") ? "☀️ Light" : "🌙 Dark";
 
 function logout(){
 localStorage.clear();
-location="login.html";
+location="index.html";
 }
 </script>
 <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
